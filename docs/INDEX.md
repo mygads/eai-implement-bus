@@ -42,6 +42,7 @@ Jika baru pertama kali membuka project ini, ikuti urutan berikut:
 | [ARSITEKTUR.md](./ARSITEKTUR.md) | Detail arsitektur sistem | Architect & Developer |
 | [KONSEP-SOA.md](./KONSEP-SOA.md) | Penjelasan konsep SOA | Presentasi & Dosen |
 | [IMPLEMENTASI.md](./IMPLEMENTASI.md) | Detail implementasi teknis | Developer |
+| [API-ENDPOINTS.md](./API-ENDPOINTS.md) | Dokumentasi API lengkap | Developer & Tester ⭐ |
 | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Solve common issues | Support & Ops |
 
 ### Quick Reference
