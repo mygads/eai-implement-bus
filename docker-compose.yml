@@ -1,0 +1,178 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # SERVICE 1: DINAS KEPENDUDUKAN (PHP + SQLite)
+  # ============================================
+  service-kependudukan:
+    build:
+      context: ./service-kependudukan
+      dockerfile: Dockerfile
+    container_name: service-kependudukan
+    ports:
+      - "3001:80"
+    volumes:
+      - kependudukan-data:/var/www/html/data
+    networks:
+      - soa-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================
+  # SERVICE 2: DINAS PENDAPATAN (Python + PostgreSQL)
+  # ============================================
+  db-pendapatan:
+    image: postgres:16-alpine
+    container_name: db-pendapatan
+    environment:
+      POSTGRES_DB: pendapatan_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+      - pendapatan-db-data:/var/lib/postgresql/data
+    networks:
+      - soa-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-pendapatan:
+    build:
+      context: ./service-pendapatan
+      dockerfile: Dockerfile
+    container_name: service-pendapatan
+    ports:
+      - "3002:5000"
+    environment:
+      DB_HOST: db-pendapatan
+      DB_NAME: pendapatan_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      DB_PORT: 5432
+    depends_on:
+      db-pendapatan:
+        condition: service_healthy
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  # ============================================
+  # SERVICE 3: DINAS PU (Go + MySQL)
+  # ============================================
+  db-pu:
+    image: mysql:8.0
+    container_name: db-pu
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql123
+      MYSQL_DATABASE: pu_db
+    volumes:
+      - pu-db-data:/var/lib/mysql
+    networks:
+      - soa-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmysql123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-pu:
+    build:
+      context: ./service-pu
+      dockerfile: Dockerfile
+    container_name: service-pu
+    ports:
+      - "3003:8080"
+    environment:
+      DB_HOST: db-pu
+      DB_NAME: pu_db
+      DB_USER: root
+      DB_PASSWORD: mysql123
+      DB_PORT: 3306
+      PORT: 8080
+    depends_on:
+      db-pu:
+        condition: service_healthy
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  # ============================================
+  # SERVICE 4: DINAS KESEHATAN (Node.js + MongoDB)
+  # ============================================
+  db-kesehatan:
+    image: mongo:7.0
+    container_name: db-kesehatan
+    volumes:
+      - kesehatan-db-data:/data/db
+    networks:
+      - soa-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-kesehatan:
+    build:
+      context: ./service-kesehatan
+      dockerfile: Dockerfile
+    container_name: service-kesehatan
+    ports:
+      - "3004:3000"
+    environment:
+      MONGO_URI: mongodb://db-kesehatan:27017/kesehatan_db
+      PORT: 3000
+    depends_on:
+      db-kesehatan:
+        condition: service_healthy
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  # ============================================
+  # API GATEWAY / ESB
+  # ============================================
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SERVICE_KEPENDUDUKAN_URL: http://service-kependudukan
+      SERVICE_PENDAPATAN_URL: http://service-pendapatan:5000
+      SERVICE_PU_URL: http://service-pu:8080
+      SERVICE_KESEHATAN_URL: http://service-kesehatan:3000
+      PORT: 8080
+    depends_on:
+      - service-kependudukan
+      - service-pendapatan
+      - service-pu
+      - service-kesehatan
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+volumes:
+  kependudukan-data:
+    driver: local
+  pendapatan-db-data:
+    driver: local
+  pu-db-data:
+    driver: local
+  kesehatan-db-data:
+    driver: local
+
+networks:
+  soa-network:
+    driver: bridge
