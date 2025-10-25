@@ -13,7 +13,7 @@ Write-Host "╚═════════════════════�
 
 function Seed-Kependudukan {
     Write-Host "📂 Seeding Service Kependudukan (PHP + SQLite)..." -ForegroundColor Yellow
-    docker exec service-kependudukan /var/www/html/seed.sh
+    docker exec service-kependudukan /app/seed.sh
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ Kependudukan seeded successfully!`n" -ForegroundColor Green
     } else {
@@ -35,7 +35,7 @@ function Seed-PU {
     Write-Host "📂 Seeding Service PU (Go + MySQL)..." -ForegroundColor Yellow
     # Install mysql client in container if needed
     docker exec service-pu sh -c "apk add --no-cache mysql-client 2>/dev/null || true"
-    docker exec service-pu /app/seed.sh
+    docker exec service-pu /root/seed.sh
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ PU seeded successfully!`n" -ForegroundColor Green
     } else {
@@ -92,7 +92,7 @@ Write-Host ""
 
 # Check counts
 Write-Host "Service Kependudukan: " -NoNewline
-docker exec service-kependudukan sqlite3 /var/www/html/data/kependudukan.db "SELECT COUNT(*) FROM penduduk;" 2>$null
+docker exec service-kependudukan sqlite3 /app/data/kependudukan.db "SELECT COUNT(*) FROM penduduk;" 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host " records" -ForegroundColor Green
 }

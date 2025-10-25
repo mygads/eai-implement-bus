@@ -30,7 +30,7 @@ docker-compose down
 
 **Kependudukan:**
 ```powershell
-docker exec service-kependudukan /var/www/html/seed.sh
+docker exec service-kependudukan /app/seed.sh
 ```
 
 **Pendapatan:**

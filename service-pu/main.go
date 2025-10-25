@@ -44,7 +44,7 @@ func initDatabase() error {
 	dbName := getEnv("DB_NAME", "pu_db")
 
 	// Connection string
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPass, dbHost, dbPort, dbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&multiStatements=true", dbUser, dbPass, dbHost, dbPort, dbName)
 
 	// Retry logic
 	maxRetries := 30
@@ -95,7 +95,7 @@ func initDatabase() error {
 	// Auto-seed data if empty (optional - can be disabled with env AUTO_SEED=false)
 	if count == 0 && os.Getenv("AUTO_SEED") != "false" {
 		// Try to load from seed file
-		seedFile := "/app/seed_data.sql"
+		seedFile := "/root/seed_data.sql"
 		if sqlBytes, err := os.ReadFile(seedFile); err == nil {
 			_, err = db.Exec(string(sqlBytes))
 			if err != nil {
@@ -104,7 +104,7 @@ func initDatabase() error {
 				log.Println("Data seeded from SQL file successfully!")
 			}
 		} else {
-			log.Printf("Seed file not found, skipping auto-seed")
+			log.Printf("Seed file not found, skipping auto-seed: %v", err)
 		}
 	}
 

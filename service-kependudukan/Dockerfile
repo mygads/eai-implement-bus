@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 # Install SQLite extension
 RUN apt-get update && apt-get install -y \
@@ -7,36 +7,22 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_sqlite \
     && rm -rf /var/lib/apt/lists/*
 
-# Enable Apache modules
-RUN a2enmod rewrite
-
-# Configure Apache
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Copy application files
-COPY index.php /var/www/html/
-COPY seed_data.sql /var/www/html/
-COPY seed.sh /var/www/html/
+COPY index.php /app/
+COPY seed_data.sql /app/
+COPY seed.sh /app/
 
 # Make seed script executable
-RUN chmod +x /var/www/html/seed.sh
+RUN chmod +x /app/seed.sh
 
 # Create data directory
-RUN mkdir -p /var/www/html/data && \
-    chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
-
-# Configure Apache to allow .htaccess
-RUN echo '<Directory /var/www/html>\n\
-    Options Indexes FollowSymLinks\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>' > /etc/apache2/conf-available/docker-php.conf && \
-    a2enconf docker-php
+RUN mkdir -p /app/data && \
+    chmod -R 777 /app/data
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+# Use PHP built-in server
+CMD ["php", "-S", "0.0.0.0:80", "-t", "/app"]

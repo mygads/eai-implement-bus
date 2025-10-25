@@ -12,6 +12,7 @@ RUN go mod download
 # Copy source code
 COPY main.go .
 COPY seed_data.sql .
+COPY seed.sh .
 
 # Build application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
@@ -23,8 +24,13 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-# Copy binary from builder
+# Copy binary and seed files from builder
 COPY --from=builder /app/main .
+COPY --from=builder /app/seed_data.sql .
+COPY --from=builder /app/seed.sh .
+
+# Make seed script executable
+RUN chmod +x /root/seed.sh
 
 EXPOSE 8080
 

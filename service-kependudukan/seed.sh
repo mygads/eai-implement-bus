@@ -4,7 +4,7 @@
 
 echo "🌱 Seeding data for Service Kependudukan..."
 
-DB_PATH="/var/www/html/data/kependudukan.db"
+DB_PATH="/app/data/kependudukan.db"
 
 # Check if database exists
 if [ ! -f "$DB_PATH" ]; then
@@ -12,7 +12,7 @@ if [ ! -f "$DB_PATH" ]; then
 fi
 
 # Run seed SQL
-sqlite3 "$DB_PATH" < /var/www/html/seed_data.sql
+sqlite3 "$DB_PATH" < /app/seed_data.sql
 
 if [ $? -eq 0 ]; then
     echo "✅ Data seeded successfully!"

@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Database setup
-$dbFile = '/var/www/html/data/kependudukan.db';
+$dbFile = '/app/data/kependudukan.db';
 $dbDir = dirname($dbFile);
 
 if (!file_exists($dbDir)) {
