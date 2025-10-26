@@ -183,16 +183,82 @@ fastify.get('/api/rekam-medis/:nik', async (request, reply) => {
   return data;
 });
 
+// Search endpoint for autocomplete
+fastify.get('/api/penduduk/search', async (request, reply) => {
+  const data = await callService(`${SERVICES.kependudukan}/penduduk/search`);
+  
+  if (!data) {
+    reply.code(503).send({ success: false, error: 'Service unavailable' });
+    return;
+  }
+  
+  return data;
+});
+
+// Credits endpoint
+fastify.get('/credit', async (request, reply) => {
+  return {
+    project: 'Implementasi SOA dengan API Gateway/ESB',
+    description: 'Sistem Informasi Pemerintah Kota Terintegrasi',
+    course: 'Integrasi Aplikasi Enterprise',
+    university: 'Telkom University',
+    team: 'Kelompok 5',
+    members: [
+      {
+        name: 'Riyana Kartika Pratiwi',
+        nim: '102022580006'
+      },
+      {
+        name: 'Muhammad Yoga Adi Saputra',
+        nim: '102022580032'
+      },
+      {
+        name: 'Fadli Muhammad Arsyi',
+        nim: '102022580036'
+      },
+      {
+        name: 'Delita Noor Iftitah',
+        nim: '102022580045'
+      }
+    ],
+    technologies: {
+      frontend: 'React + Vite + Tailwind CSS',
+      gateway: 'Node.js + Fastify',
+      services: [
+        'PHP 8.2 + SQLite (Kependudukan)',
+        'Python 3.11 + PostgreSQL (Pendapatan)',
+        'Go 1.21 + MySQL (Pekerjaan Umum)',
+        'Node.js 20 + MongoDB (Kesehatan)'
+      ]
+    },
+    year: 2025
+  };
+});
+
 // API documentation
 fastify.get('/', async (request, reply) => {
   return {
     message: 'API Gateway / Enterprise Service Bus (ESB)',
     version: '1.0.0',
+    project: 'Implementasi SOA - Sistem Informasi Pemerintah Kota',
+    team: {
+      course: 'Integrasi Aplikasi Enterprise',
+      university: 'Telkom University',
+      group: 'Kelompok 5',
+      members: [
+        'Riyana Kartika Pratiwi (102022580006)',
+        'Muhammad Yoga Adi Saputra (102022580032)',
+        'Fadli Muhammad Arsyi (102022580036)',
+        'Delita Noor Iftitah (102022580045)'
+      ]
+    },
     documentation: {
       authentication: 'Gunakan header X-API-Key dengan salah satu key: demo-api-key-12345, test-key-67890, admin-key-abcde',
       endpoints: {
         health: 'GET /health - Health check',
+        credits: 'GET /credit - Team credits & project info',
         servicesHealth: 'GET /services/health - Check all services health',
+        searchPenduduk: 'GET /api/penduduk/search - Search NIK & Nama (for autocomplete)',
         aggregator: 'GET /api/warga/:nik/profil - Aggregated profile (main feature)',
         penduduk: 'GET /api/penduduk/:nik - Data penduduk',
         pajak: 'GET /api/pajak/:npwp - Data pajak',
@@ -200,7 +266,8 @@ fastify.get('/', async (request, reply) => {
         rekamMedis: 'GET /api/rekam-medis/:nik - Data rekam medis'
       },
       example: {
-        curl: 'curl -H "X-API-Key: demo-api-key-12345" http://localhost:8080/api/warga/3201012345678901/profil'
+        curl: 'curl -H "X-API-Key: demo-api-key-12345" http://localhost:8080/api/warga/3201012345678901/profil',
+        search: 'curl -H "X-API-Key: demo-api-key-12345" http://localhost:8080/api/penduduk/search'
       }
     }
   };

@@ -163,6 +163,22 @@ services:
       - soa-network
     restart: unless-stopped
 
+  # ============================================
+  # FRONTEND (React + Vite + Tailwind)
+  # ============================================
+  service-frontend:
+    build:
+      context: ./service-frontend
+      dockerfile: Dockerfile
+    container_name: service-frontend
+    ports:
+      - "8005:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - soa-network
+    restart: unless-stopped
+
 volumes:
   kependudukan-data:
     driver: local

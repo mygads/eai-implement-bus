@@ -39,6 +39,55 @@ Invoke-RestMethod -Uri "http://localhost:8080/api/health" -Headers $headers
 
 ---
 
+## 👥 Credits & Team Information
+
+### GET /credit
+Informasi tentang tim pengembang dan project.
+
+**Headers:** `X-API-Key: demo-api-key-12345`
+
+**Response:**
+```json
+{
+  "project": "Implementasi SOA dengan API Gateway/ESB",
+  "description": "Sistem Informasi Pemerintah Kota Terintegrasi",
+  "course": "Integrasi Aplikasi Enterprise",
+  "university": "Telkom University",
+  "team": "Kelompok 5",
+  "members": [
+    {
+      "name": "Riyana Kartika Pratiwi",
+      "nim": "102022580006"
+    },
+    {
+      "name": "Muhammad Yoga Adi Saputra",
+      "nim": "102022580032"
+    },
+    {
+      "name": "Fadli Muhammad Arsyi",
+      "nim": "102022580036"
+    },
+    {
+      "name": "Delita Noor Iftitah",
+      "nim": "102022580045"
+    }
+  ],
+  "technologies": {
+    "frontend": "React + Vite + Tailwind CSS",
+    "gateway": "Node.js + Fastify",
+    "services": [
+      "PHP 8.2 + SQLite (Kependudukan)",
+      "Python 3.11 + PostgreSQL (Pendapatan)",
+      "Go 1.21 + MySQL (Pekerjaan Umum)",
+      "Node.js 20 + MongoDB (Kesehatan)"
+    ]
+  },
+  "year": 2025
+}
+```
+
+---
+
 ## 🌐 API Gateway
 **Base URL:** `http://localhost:8080`
 

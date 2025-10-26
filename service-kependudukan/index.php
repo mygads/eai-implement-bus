@@ -103,6 +103,22 @@ if ($requestMethod === 'GET' && preg_match('/^\/penduduk\/([0-9]+)$/', $path, $m
         http_response_code(500);
         echo json_encode(['error' => 'Query error: ' . $e->getMessage()]);
     }
+
+} elseif ($requestMethod === 'GET' && $path === '/penduduk/search') {
+    // GET /penduduk/search - Get NIK and Nama only for autocomplete
+    try {
+        $stmt = $db->query("SELECT nik, nama FROM penduduk ORDER BY nama");
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo json_encode([
+            'success' => true,
+            'data' => $results,
+            'count' => count($results)
+        ]);
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Query error: ' . $e->getMessage()]);
+    }
     
 } elseif ($requestMethod === 'GET' && $path === '/health') {
     // Health check
