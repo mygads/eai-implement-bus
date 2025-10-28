@@ -410,21 +410,6 @@ const WargaProfile = () => {
                 )}
               </CardContent>
             </Card>
-
-            {/* Footer Info */}
-            <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg">
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="h-8 w-8" />
-                  <div>
-                    <p className="font-semibold text-lg">API Aggregation Success!</p>
-                    <p className="text-sm text-blue-100">
-                      Data dari 4 service berbeda (PHP, Python, Go, Node.js) berhasil digabungkan dalam 1 request
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
 
